@@ -1,66 +1,126 @@
-## Foundry
+# Foundry Fund Me
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+This repository contains the source code for a Crowdfunding smart contract, which serves as a decentralized funding platform. Users can contribute funds to support specific initiatives or projects, and the contract's owner has the ability to withdraw the accumulated amount for the intended purpose.
 
-Foundry consists of:
+# Getting Started
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+## Requirements
 
-## Documentation
+- [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+  - You'll know you did it right if you can run `git --version` and you see a response like `git version x.x.x`
+- [foundry](https://getfoundry.sh/)
+  - You'll know you did it right if you can run `forge --version` and you see a response like `forge 0.2.0 (816e00b 2023-03-16T00:05:26.396218Z)`
 
-https://book.getfoundry.sh/
 
-## Usage
+## Quickstart
 
-### Build
-
-```shell
-$ forge build
+```
+git clone https://github.com/iftikharuddin/foundry-fund-me
+cd foundry-fund-me
+forge build
 ```
 
-### Test
+# Usage
 
-```shell
-$ forge test
+## Deploy:
+
+```
+forge script script/DeployFundMe.s.sol
 ```
 
-### Format
+## Testing
 
-```shell
-$ forge fmt
+Test commands
+
+```
+forge test
 ```
 
-### Gas Snapshots
+or 
 
-```shell
-$ forge snapshot
+```
+// Only run test functions matching the specified regex pattern.
+
+"forge test -m testFunctionName" is deprecated. Please use 
+
+forge test --match-test testFunctionName
 ```
 
-### Anvil
+or
 
-```shell
-$ anvil
+```
+forge test --fork-url $SEPOLIA_RPC_URL
 ```
 
-### Deploy
+### Test Coverage
 
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
+```
+forge coverage
 ```
 
-### Cast
 
-```shell
-$ cast <subcommand>
+# Deployment to a testnet or mainnet
+
+1. Setup environment variables
+
+You'll want to set your `SEPOLIA_RPC_URL` and `PRIVATE_KEY` as environment variables. You can add them to a `.env` file, similar to what you see in `.env.example`.
+
+- `PRIVATE_KEY`: The private key of your account (like from [metamask](https://metamask.io/)). **NOTE:** FOR DEVELOPMENT, PLEASE USE A KEY THAT DOESN'T HAVE ANY REAL FUNDS ASSOCIATED WITH IT.
+  - You can [learn how to export it here](https://metamask.zendesk.com/hc/en-us/articles/360015289632-How-to-Export-an-Account-Private-Key).
+- `SEPOLIA_RPC_URL`: This is url of the sepolia testnet node you're working with. You can get setup with one for free from [Alchemy](https://alchemy.com/?a=673c802981)
+
+Optionally, add your `ETHERSCAN_API_KEY` if you want to verify your contract on [Etherscan](https://etherscan.io/).
+
+1. Get testnet ETH
+
+Head over to [faucets.chain.link](https://faucets.chain.link/) and get some testnet ETH. You should see the ETH show up in your metamask.
+
+3. Deploy
+
+```
+forge script script/DeployFundMe.s.sol --rpc-url $SEPOLIA_RPC_URL --private-key $PRIVATE_KEY --broadcast --verify --etherscan-api-key $ETHERSCAN_API_KEY
 ```
 
-### Help
+## Scripts
 
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
+After deploying to a testnet or local net, you can run the scripts. 
+
+Using cast deployed locally example: 
+
 ```
+cast send <FUNDME_CONTRACT_ADDRESS> "fund()" --value 0.1ether --private-key <PRIVATE_KEY>
+```
+
+or
+```
+forge script script/Interactions.s.sol --rpc-url sepolia  --private-key $PRIVATE_KEY  --broadcast
+```
+
+### Withdraw
+
+```
+cast send <FUNDME_CONTRACT_ADDRESS> "withdraw()"  --private-key <PRIVATE_KEY>
+```
+
+## Estimate gas
+
+You can estimate how much gas things cost by running:
+
+```
+forge snapshot
+```
+
+And you'll see an output file called `.gas-snapshot`
+
+
+# Formatting
+
+
+To run code formatting:
+```
+forge fmt
+```
+
+
+# Thank you!
+
